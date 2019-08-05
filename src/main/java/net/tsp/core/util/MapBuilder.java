@@ -19,6 +19,11 @@ public class MapBuilder<K, V> {
         this (Maps.newHashMap());
     }
 
+    public MapBuilder linked() {
+        this.map = Maps.newLinkedHashMap();
+        return this;
+    }
+
     public MapBuilder put(K key, V value) {
         map.put(key, value);
         return this;

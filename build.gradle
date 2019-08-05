@@ -23,6 +23,13 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    /* SpigotMC */
     compileOnly group: 'org.spigotmc', name: 'spigot-api', version: '1.8.8-R0.1-SNAPSHOT'
+
+    /* MongoDB */
+    compile group: 'org.mongodb', name: 'mongodb-driver', version: '3.10.2'
+
+    /* Jedis */
+    compile group: 'redis.clients', name: 'jedis', version: '3.1.0'
 
 }

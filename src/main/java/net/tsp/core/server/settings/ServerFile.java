@@ -1,11 +1,11 @@
 package net.tsp.core.server.settings;
 
 import com.google.common.collect.Maps;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import net.tsp.core.TSPPlugin;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -14,7 +14,7 @@ import java.util.Map;
 public class ServerFile {
 
     private File file;
-    private Map<String, Object> fields;
+    private Map<?, ?> fields;
     private boolean firstTime;
 
     public ServerFile(File file) {
@@ -22,7 +22,21 @@ public class ServerFile {
         this.fields = Maps.newHashMap();
     }
 
-    public void writeDefaults(Map<?, ?> values)
+    public ServerFile(File file, Map<?, ?> defaults) {
+        this(file);
+        writeDefaults(defaults);
+    }
+
+    public void readNow(TypeToken typeToken) {
+        read(typeToken);
+    }
+
+    public void writeDefaultsAndRead(Map<?, ?> defaults, TypeToken typeToken) {
+        writeDefaults(defaults);
+        read(typeToken);
+    }
+
+    public void writeDefaults(Map<?, ?> defaults)
             throws NullPointerException {
 
         if (file == null)
@@ -33,7 +47,7 @@ public class ServerFile {
                 firstTime = true;
                 file.createNewFile();
 
-                write(values);
+                write(defaults);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -44,8 +58,21 @@ public class ServerFile {
 
     private void write(Object object) {
 
-        try {
-            TSPPlugin.gson.toJson(object, new FileWriter(file));
+        try (Writer writer = new FileWriter(file)) {
+            TSPPlugin.gson.toJson(object, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void read(TypeToken typeToken) {
+
+        try (Reader reader = new FileReader(file)) {
+            JsonReader jsonReader = new JsonReader(reader);
+
+            this.fields = TSPPlugin.gson.fromJson(jsonReader, typeToken.getType());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,7 +87,7 @@ public class ServerFile {
         return file != null && file.exists();
     }
 
-    public Map<String, Object> getFields() {
+    public Map<?, ?> getFields() {
         return fields;
     }
 

@@ -1,0 +1,5 @@
+name: TSPCore
+description: A standalone API plugin with only basic features.
+author: Ellie
+main: net.tsp.core.StandaloneAPIPlugin
+version: 0.1-DEV
